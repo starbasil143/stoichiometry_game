@@ -1,2 +1,2 @@
 # stoichiometry_game
-game to teach balancing chemical equations
+A game I'm putting together to serve as a way to practice balancing chemical equations. 
