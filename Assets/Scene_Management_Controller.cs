@@ -6,28 +6,61 @@ using TMPro;
 using UnityEngine.UI;
 using Unity.VisualScripting;
 using System;
+using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
+using UnityEditor.ProjectWindowCallback;
 
 public class Scene_Management_Controller : MonoBehaviour
 {
 
-    public class Element
+    public class Molecule
     {
-        public string name;
-        public int amount;
-
-        public Element(string newName, int newAmount)
+        public List<(String eName, int eAmount)> elements = new List<(String eName, int eAmount)>();
+        public int amount = 1;
+        public Molecule(params string[] newElements) // Molecule("H,2", "0,1")
         {
-            name = newName;
-            amount = newAmount;
+            foreach (string elem in newElements)
+            {
+                string[] elemSplit = elem.Split(',');
+                elements.Add((elemSplit[0],Convert.ToInt32(elemSplit[1])));
+            }
+        }
+
+        public void Increment()
+        {
+            amount++;
+        }
+        public void Decrement()
+        {
+            amount--;
+        }
+
+        public List<(String eName, int eAmount)> GetElements()
+        {
+            List<(String eName, int eAmount)> totals = new List<(String eName, int eAmount)>();
+            foreach ((String eName, int eAmount) element in elements)
+            {
+                totals.Add((element.eName, element.eAmount * amount));
+            }
+            return totals;
+        }
+
+        public override string ToString()
+        {
+            string output = "";
+            foreach((String eName, int eAmount) element in elements)
+            {
+                output += element.eName + ((element.eAmount>1) ? element.eAmount : "");
+            }
+            return output;
         }
     }
 
     public class Problem
     {
-        List<string> leftSide = new List<string>();
-        List<string> rightSide = new List<string>();
+        List<Molecule> leftSide = new List<Molecule>();
+        List<Molecule> rightSide = new List<Molecule>();
 
-        public void PushMolecule(string side, params string[] molecules)
+        public void PushMolecule(string side, params Molecule[] molecules)
         {
             if(side.ToLower() == "left")
             {
@@ -43,9 +76,9 @@ public class Scene_Management_Controller : MonoBehaviour
             }
         }
         
-        public List<string>[] GetMolecules()
+        public List<Molecule>[] GetMolecules()
         {
-            List<string>[] fullEquation = {leftSide, rightSide};
+            List<Molecule>[] fullEquation = {leftSide, rightSide};
             return fullEquation;
         }
 
@@ -55,12 +88,12 @@ public class Scene_Management_Controller : MonoBehaviour
 
             for (int i = 0; i < GetMolecules()[0].Count; i++) //left side
             {
-                equationString += GetMolecules()[0][i] + " " + (i+1!=GetMolecules()[0].Count ? "+ " : "");
+                equationString += GetMolecules()[0][i].ToString() + " " + (i+1!=GetMolecules()[0].Count ? "+ " : "");
             }
             equationString += "--> ";
             for (int i = 0; i < GetMolecules()[1].Count; i++) //right side
             {
-                equationString += GetMolecules()[1][i] + " " + (i+1!=GetMolecules()[1].Count ? "+ " : "");
+                equationString += GetMolecules()[1][i].ToString() + " " + (i+1!=GetMolecules()[1].Count ? "+ " : "");
             }
             
             Debug.Log(equationString);
@@ -70,13 +103,14 @@ public class Scene_Management_Controller : MonoBehaviour
     void Start()
     {
         Problem problem1 = new Problem();
-        problem1.PushMolecule("left","N2","H2");
-        problem1.PushMolecule("right","NH3");
+        problem1.PushMolecule("left", new Molecule("N,2","H,2"));
+        problem1.PushMolecule("right", new Molecule("N,3","H,1"));
 
         Problem problem2 = new Problem();
-        problem2.PushMolecule("left","C3H8","O2");
-        problem2.PushMolecule("right","H20","CO2");
+        problem2.PushMolecule("left",new Molecule("C,3","H,8"), new Molecule("O,2"));
+        problem2.PushMolecule("right",new Molecule("H,2", "O,1"), new Molecule("C,1", "O,2"));
 
+        Debug.Log("Fortnite");
         problem1.PrintEquation();
         problem2.PrintEquation();
     }
@@ -89,3 +123,11 @@ public class Scene_Management_Controller : MonoBehaviour
 
 //SceneManager.LoadScene("SampleScene");
 //brackeys
+
+
+
+//increment molecules
+//count elements
+//u gotta do these things
+//caus thats what the game is
+
