@@ -127,13 +127,13 @@ public class Scene_Management_Controller : MonoBehaviour
         {
             new Problem
             (
-                new[] {new Molecule("O 1")},
+                new[] {new Molecule("O")},
                 new[] {new Molecule("O 2")}
             ),
             new Problem
             (
                 new[] {new Molecule("H 2"), new Molecule("O 2"), },
-                new[] {new Molecule("H 2", "O 1")}
+                new[] {new Molecule("H 2", "O")}
             ),
             new Problem
             (
@@ -352,4 +352,3 @@ public class Scene_Management_Controller : MonoBehaviour
 //count elements
 //u gotta do these things
 //caus thats what the game is
-
