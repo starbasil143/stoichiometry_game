@@ -11,114 +11,6 @@ using UnityEditor.ProjectWindowCallback;
 
 public class Scene_Management_Controller : MonoBehaviour
 {
-
-    public class Molecule
-    {
-        public List<(String eName, int eAmount)> elements = new List<(String eName, int eAmount)>();
-        public int amount = 1;
-        public Molecule(params string[] newElements) // Molecule("H 2", "0 1")
-        {
-            foreach (string elem in newElements)
-            {
-                string[] elemSplit = elem.Split(' ');
-                if (elemSplit.Length == 1)
-                {
-                    elements.Add((elemSplit[0], 1));
-                }
-                else
-                {
-                    elements.Add((elemSplit[0],Convert.ToInt32(elemSplit[1])));
-                }
-            }
-        }
-
-        public void Increment()
-        {
-            amount++;
-        }
-        public void Decrement()
-        {
-            amount--;
-        }
-
-        public List<(String eName, int eAmount)> GetElements()
-        {
-            List<(String eName, int eAmount)> totals = new List<(String eName, int eAmount)>();
-            foreach ((String eName, int eAmount) element in elements)
-            {
-                totals.Add((element.eName, element.eAmount * amount));
-            }
-            return totals;
-        }
-
-        public override string ToString()
-        {
-            string output = "";
-            foreach((String eName, int eAmount) element in elements)
-            {
-                output += element.eName + ((element.eAmount>1) ? element.eAmount : "");
-            }
-            return output;
-        }
-    }
-
-    public class Problem
-    {
-        List<Molecule> leftSide = new List<Molecule>();
-        List<Molecule> rightSide = new List<Molecule>();
-
-        public Problem()
-        {
-            //empty constructor
-        }
-
-        public Problem(Molecule[] leftInput, Molecule[] rightInput)
-        {
-            leftSide.AddRange(leftInput);
-            rightSide.AddRange(rightInput);
-        }
-
-        public void PushMolecule(string side, params Molecule[] molecules)
-        {
-            if(side.ToLower() == "left")
-            {
-                leftSide.AddRange(molecules);
-            }
-            else if(side.ToLower() == "right")
-            {
-                rightSide.AddRange(molecules);
-            }
-            else
-            {
-                Debug.Log("Invalid side. Use left or right.");
-            }
-        }
-        
-        public List<Molecule>[] GetMolecules()
-        {
-            List<Molecule>[] fullEquation = {leftSide, rightSide};
-            return fullEquation;
-        }
-
-        public void PrintEquation()
-        {
-            string equationString = "";
-
-            for (int i = 0; i < GetMolecules()[0].Count; i++) //left side
-            {
-                equationString += GetMolecules()[0][i].ToString() + " " + (i+1!=GetMolecules()[0].Count ? "+ " : "");
-            }
-            equationString += "--> ";
-            for (int i = 0; i < GetMolecules()[1].Count; i++) //right side
-            {
-                equationString += GetMolecules()[1][i].ToString() + " " + (i+1!=GetMolecules()[1].Count ? "+ " : "");
-            }
-            
-            Debug.Log(equationString);
-        }
-        
-
-    }
     void Start()
     {
         //fill database of problems
@@ -324,7 +216,7 @@ public class Scene_Management_Controller : MonoBehaviour
                 new[] {new Molecule("Ag 3", "P", "O 4"), new Molecule("K", "N", "O 3")}
             ),
         };
-
+        /*
         foreach(Problem prob in problemsEasy)
         {
             prob.PrintEquation();
@@ -333,13 +225,29 @@ public class Scene_Management_Controller : MonoBehaviour
                 foreach(Problem prob in problemsMedium)
         {
             prob.PrintEquation();
-        }
+        }*/
+
+        runProblem(problemsTutorial[1]);
 
     }
 
     void Update()
     {
         
+    }
+
+    void runProblem(Problem prob)
+    {
+        prob.PrintEquation();
+        Debug.Log(prob.isBalanced());
+        prob.leftSide[0].Increment();
+        prob.PrintEquation();
+        Debug.Log(prob.isBalanced());
+        prob.rightSide[0].Increment();
+        prob.PrintEquation();
+        Debug.Log(prob.isBalanced());
+
+
     }
 }
 
