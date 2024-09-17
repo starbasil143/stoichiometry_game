@@ -9,12 +9,15 @@ public class EquationManager : MonoBehaviour
     [SerializeField] private GameObject defaultSelection;
     [SerializeField] private GameObject MolButton;
     [SerializeField] private GameObject equationCanvas;
+    [SerializeField] private GameObject WinScreen;
 
 
     private GameObject currentSelection;
+
+    private Problem currentProblem;
     
 
-    void Start()
+    private void Start()
     {
 
         #region Create Problem Lists
@@ -226,18 +229,35 @@ public class EquationManager : MonoBehaviour
         runProblem(problemsEasy[Random.Range(0,problemsEasy.Count-1)]);
     }
 
-    void Update()
+    private void Update()
     {
         if (EventSystem.current.currentSelectedGameObject == null)
         {
             EventSystem.current.SetSelectedGameObject(currentSelection);
         }
-
         currentSelection = EventSystem.current.currentSelectedGameObject;
+
+        if (InputManager.instance.MoleculeIncrementInput)
+        {
+            EventSystem.current.currentSelectedGameObject.GetComponent<MolButtonController>().IncrementMolecule();
+        }
+        if (InputManager.instance.MoleculeDecrementInput)
+        {
+            EventSystem.current.currentSelectedGameObject.GetComponent<MolButtonController>().DecrementMolecule();
+        }
+        if (InputManager.instance.CheckAnswerInput)
+        {
+            Debug.Log(currentProblem.isBalanced());
+            if(currentProblem.isBalanced())
+            {
+                WinScreen.SetActive(true);
+            }
+        }
     }
 
-    void runProblem(Problem prob)
+    private void runProblem(Problem prob)
     {
+        currentProblem = prob;
         //Create molecule buttons, place inside a Left list and a Right list
         List<GameObject> buttonsLeft = new List<GameObject>();
         for (int i = 0; i < prob.leftSide.Count; i++)

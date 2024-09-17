@@ -25,11 +25,17 @@ public class Molecule
 
     public void Increment()
     {
-        amount++;
+        if(amount < 20)
+        {
+            amount++;
+        }
     }
     public void Decrement()
     {
-        amount--;
+        if(amount > 1)
+        {
+            amount--;
+        }
     }
 
     public Dictionary<String, int> GetElements()
