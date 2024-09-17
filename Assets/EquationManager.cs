@@ -6,10 +6,12 @@ using UnityEngine.EventSystems;
 public class EquationManager : MonoBehaviour
 {
     [SerializeField] private GameObject defaultSelection;
-
+    [SerializeField] private GameObject MolButton;
+    [SerializeField] private GameObject equationCanvas;
 
 
     private GameObject currentSelection;
+    
 
     void Start()
     {
@@ -223,7 +225,7 @@ public class EquationManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(defaultSelection);
         currentSelection = EventSystem.current.currentSelectedGameObject;
 
-        runProblem(problemsTutorial[1]);
+        runProblem(problemsEasy[Random.Range(0,problemsEasy.Count-1)]);
     }
 
     void Update()
@@ -238,13 +240,20 @@ public class EquationManager : MonoBehaviour
 
     void runProblem(Problem prob)
     {
-        prob.PrintEquation();
-        Debug.Log(prob.isBalanced());
-        prob.leftSide[0].Increment();
-        prob.PrintEquation();
-        Debug.Log(prob.isBalanced());
-        prob.rightSide[0].Increment();
-        prob.PrintEquation();
-        Debug.Log(prob.isBalanced());
+        List<GameObject> buttonsLeft = new List<GameObject>();
+        for (int i = 0; i < prob.leftSide.Count; i++)
+        {
+            buttonsLeft.Add(Instantiate(MolButton, equationCanvas.transform));
+            buttonsLeft[i].GetComponent<MolButtonController>().molecule = prob.leftSide[i];
+            buttonsLeft[i].transform.localPosition = new Vector2((i+1)*(-960f)/(prob.leftSide.Count+1), 0f);
+        }
+
+        List<GameObject> buttonsRight = new List<GameObject>();
+        for (int i = 0; i < prob.rightSide.Count; i++)
+        {
+            buttonsRight.Add(Instantiate(MolButton, equationCanvas.transform));
+            buttonsRight[i].GetComponent<MolButtonController>().molecule = prob.rightSide[i];
+            buttonsRight[i].transform.localPosition = new Vector2((i+1)*(960f)/(prob.rightSide.Count+1), 0f);
+        }
     }
 }

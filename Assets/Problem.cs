@@ -108,6 +108,11 @@ public class Problem
         Debug.Log(equationString);
     }
 
+    public int GetEquationSize()
+    {
+        return leftSide.Count + rightSide.Count;
+    }
+
     public bool isBalanced()
     {
         Dictionary<String, int> leftElements = new Dictionary<String, int>();
