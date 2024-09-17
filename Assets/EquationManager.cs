@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class EquationManager : MonoBehaviour
 {
@@ -222,9 +223,6 @@ public class EquationManager : MonoBehaviour
         };
         #endregion
 
-        EventSystem.current.SetSelectedGameObject(defaultSelection);
-        currentSelection = EventSystem.current.currentSelectedGameObject;
-
         runProblem(problemsEasy[Random.Range(0,problemsEasy.Count-1)]);
     }
 
@@ -245,7 +243,7 @@ public class EquationManager : MonoBehaviour
         {
             buttonsLeft.Add(Instantiate(MolButton, equationCanvas.transform));
             buttonsLeft[i].GetComponent<MolButtonController>().molecule = prob.leftSide[i];
-            buttonsLeft[i].transform.localPosition = new Vector2((i+1)*(-960f)/(prob.leftSide.Count+1), 0f);
+            buttonsLeft[i].transform.localPosition = new Vector2((prob.leftSide.Count - (i+1))*(-960f)/(prob.leftSide.Count+1), 0f);
         }
 
         List<GameObject> buttonsRight = new List<GameObject>();
@@ -255,5 +253,30 @@ public class EquationManager : MonoBehaviour
             buttonsRight[i].GetComponent<MolButtonController>().molecule = prob.rightSide[i];
             buttonsRight[i].transform.localPosition = new Vector2((i+1)*(960f)/(prob.rightSide.Count+1), 0f);
         }
+
+        for (int i = 0; i < buttonsLeft.Count; i++)
+        {
+            Navigation NewNavigation = new Navigation();
+            NewNavigation.mode = Navigation.Mode.Explicit;
+            NewNavigation.selectOnRight = 
+                (i == buttonsLeft.Count-1) ? buttonsRight[0].GetComponent<Button>() : buttonsLeft[i+1].GetComponent<Button>();
+            NewNavigation.selectOnLeft =
+                (i == 0) ? buttonsRight[buttonsRight.Count-1].GetComponent<Button>() : buttonsLeft[i-1].GetComponent<Button>();
+            buttonsLeft[i].GetComponent<Button>().navigation = NewNavigation;
+        }
+
+        for (int i = 0; i < buttonsRight.Count; i++)
+        {
+            Navigation NewNavigation = new Navigation();
+            NewNavigation.mode = Navigation.Mode.Explicit;
+            NewNavigation.selectOnRight = 
+                (i == buttonsRight.Count-1) ? buttonsLeft[0].GetComponent<Button>() : buttonsRight[i+1].GetComponent<Button>();
+            NewNavigation.selectOnLeft =
+                (i == 0) ? buttonsLeft[buttonsLeft.Count-1].GetComponent<Button>() : buttonsRight[i-1].GetComponent<Button>();
+            buttonsRight[i].GetComponent<Button>().navigation = NewNavigation;
+        }
+
+        EventSystem.current.SetSelectedGameObject(buttonsLeft[0]);
+        currentSelection = EventSystem.current.currentSelectedGameObject;
     }
 }
