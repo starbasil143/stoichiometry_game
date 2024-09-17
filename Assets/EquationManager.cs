@@ -238,12 +238,13 @@ public class EquationManager : MonoBehaviour
 
     void runProblem(Problem prob)
     {
+        //Create molecule buttons, place inside a Left list and a Right list
         List<GameObject> buttonsLeft = new List<GameObject>();
         for (int i = 0; i < prob.leftSide.Count; i++)
         {
             buttonsLeft.Add(Instantiate(MolButton, equationCanvas.transform));
             buttonsLeft[i].GetComponent<MolButtonController>().molecule = prob.leftSide[i];
-            buttonsLeft[i].transform.localPosition = new Vector2((prob.leftSide.Count - (i+1))*(-960f)/(prob.leftSide.Count+1), 0f);
+            buttonsLeft[i].transform.localPosition = new Vector2((prob.leftSide.Count - i)*(-960f)/(prob.leftSide.Count+1), 0f);
         }
 
         List<GameObject> buttonsRight = new List<GameObject>();
