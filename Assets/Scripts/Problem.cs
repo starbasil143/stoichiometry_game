@@ -53,7 +53,7 @@ public class Molecule
         string output = (amount>1 ? "("+amount+")" : "");
         foreach((String eName, int eAmount) element in elements)
         {
-            output += element.eName + ((element.eAmount>1) ? element.eAmount : "");
+            output += element.eName + ((element.eAmount>1) ? "<sub>"+element.eAmount+"</sub>" : "");
         }
         return output;
     }

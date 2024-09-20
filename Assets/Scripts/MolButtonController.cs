@@ -6,6 +6,8 @@ using TMPro;
 
 public class MolButtonController : MonoBehaviour
 {
+    [SerializeField] private AudioSource AudioIncrement;
+    [SerializeField] private AudioSource AudioDecrement;
     public Molecule molecule;
     Animator buttonAnimator;
 
@@ -22,11 +24,14 @@ public class MolButtonController : MonoBehaviour
         molecule.Increment();
         transform.Find("AmountText").GetComponent<TMP_Text>().text = molecule.amount.ToString();
         buttonAnimator.Play("increment", -1, 0f);
+        AudioIncrement.Play();
+
     }
 
     public void DecrementMolecule()
     {
         molecule.Decrement();
         transform.Find("AmountText").GetComponent<TMP_Text>().text = (molecule.amount == 1) ? "" : molecule.amount.ToString();
+        AudioDecrement.Play();
     }
 }
