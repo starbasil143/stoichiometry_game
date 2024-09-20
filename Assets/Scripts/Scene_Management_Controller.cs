@@ -15,19 +15,6 @@ public class Scene_Management_Controller : MonoBehaviour
     void Start()
     {
         
-        /*
-        foreach(Problem prob in problemsEasy)
-        {
-            prob.PrintEquation();
-        }
-
-                foreach(Problem prob in problemsMedium)
-        {
-            prob.PrintEquation();
-        }*/
-
-        //runProblem(problemsTutorial[1]);
-
     }
 
     void Update()
