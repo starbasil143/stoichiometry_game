@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,10 +12,28 @@ public class EquationManager : MonoBehaviour
     [SerializeField] private GameObject equationCanvas;
     [SerializeField] private GameObject WinScreen;
 
+    private int[] problemSetAmounts = {4,4,4};
+
 
     private GameObject currentSelection;
 
     private Problem currentProblem;
+
+    
+    private List<Problem> easyProblemSet = new List<Problem>();
+    private List<Problem> medProblemSet = new List<Problem>();
+    private List<Problem> hardProblemSet = new List<Problem>();
+
+
+    private List<List<Problem>> ProblemSets = new List<List<Problem>>(); //picked out problems
+    private List<List<Problem>> ProblemDatabase = new List<List<Problem>>(); //all problems
+
+    
+    private List<GameObject> buttonsLeft = new List<GameObject>();
+    private List<GameObject> buttonsRight = new List<GameObject>();
+
+    private int currentProblemSet = 0;
+    private int currentProblemNumber = 0;
     
 
     private void Start()
@@ -224,9 +243,60 @@ public class EquationManager : MonoBehaviour
                 new[] {new Molecule("Ag 3", "P", "O 4"), new Molecule("K", "N", "O 3")}
             ),
         };
+        List<Problem> problemsHard = new List<Problem>
+        {
+            new Problem
+            (
+                new[] {new Molecule("Ag", "N", "O 3"), new Molecule("K 3", "P", "O 4")},
+                new[] {new Molecule("Ag 3", "P", "O 4"), new Molecule("K", "N", "O 3")}
+            ),
+            new Problem
+            (
+                new[] {new Molecule("Ag", "N", "O 3"), new Molecule("K 3", "P", "O 4")},
+                new[] {new Molecule("Ag 3", "P", "O 4"), new Molecule("K", "N", "O 3")}
+            ),
+            new Problem
+            (
+                new[] {new Molecule("Ag", "N", "O 3"), new Molecule("K 3", "P", "O 4")},
+                new[] {new Molecule("Ag 3", "P", "O 4"), new Molecule("K", "N", "O 3")}
+            ),
+            new Problem
+            (
+                new[] {new Molecule("Ag", "N", "O 3"), new Molecule("K 3", "P", "O 4")},
+                new[] {new Molecule("Ag 3", "P", "O 4"), new Molecule("K", "N", "O 3")}
+            ),
+        };
         #endregion
 
-        runProblem(problemsEasy[Random.Range(0,problemsEasy.Count-1)]);
+
+        // fill ProblemDatabase
+        ProblemDatabase.Add(problemsEasy);
+        ProblemDatabase.Add(problemsMedium);
+        ProblemDatabase.Add(problemsHard);
+
+        // fill ProblemSets
+        ProblemSets.Add(easyProblemSet);
+        ProblemSets.Add(medProblemSet);
+        ProblemSets.Add(hardProblemSet);
+/*
+        for (int i = 0; i < problemSetAmounts[0]; i++)
+        {
+            int randEasy = Random.Range(0,problemsEasy.Count-1);
+            easyProblemSet.Add(problemsEasy[randEasy]);
+        }
+*/
+        for (int i = 0; i < ProblemSets.Count; i++)
+        {
+            for (int j = 0; j < problemSetAmounts[i]; j++)
+            {
+                int rand = Random.Range(0, ProblemDatabase[i].Count-1);
+                ProblemSets[i].Add(ProblemDatabase[i][rand]);
+            }
+        }
+
+
+
+        runProblem(ProblemSets[0][currentProblemNumber]);
     }
 
     private void Update()
@@ -250,16 +320,42 @@ public class EquationManager : MonoBehaviour
             Debug.Log(currentProblem.isBalanced());
             if(currentProblem.isBalanced())
             {
-                WinScreen.SetActive(true);
+                WinScreen.GetComponent<WinScreenController>().PlayLevelSwitchAnimation();
+
+                foreach (GameObject item in buttonsLeft)
+                {
+                    Destroy(item);
+                }
+                foreach (GameObject item in buttonsRight)
+                {
+                    Destroy(item);
+                }
+                buttonsLeft.Clear();
+                buttonsRight.Clear();
+                if(currentProblemNumber < (problemSetAmounts[currentProblemSet]-1))
+                {
+                    runProblem(ProblemSets[currentProblemSet][++currentProblemNumber]);
+                }
+                else
+                {
+                    currentProblemNumber = 0;
+                    currentProblemSet ++;
+                    runProblem(ProblemSets[currentProblemSet][currentProblemNumber]);
+                }
+                
+
+
+                
             }
         }
     }
+
+
 
     private void runProblem(Problem prob)
     {
         currentProblem = prob;
         //Create molecule buttons, place inside a Left list and a Right list
-        List<GameObject> buttonsLeft = new List<GameObject>();
         for (int i = 0; i < prob.leftSide.Count; i++)
         {
             buttonsLeft.Add(Instantiate(MolButton, equationCanvas.transform));
@@ -267,7 +363,6 @@ public class EquationManager : MonoBehaviour
             buttonsLeft[i].transform.localPosition = new Vector2((prob.leftSide.Count - i)*(-960f)/(prob.leftSide.Count+1), 0f);
         }
 
-        List<GameObject> buttonsRight = new List<GameObject>();
         for (int i = 0; i < prob.rightSide.Count; i++)
         {
             buttonsRight.Add(Instantiate(MolButton, equationCanvas.transform));
