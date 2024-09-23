@@ -205,7 +205,7 @@ public class EquationManager : MonoBehaviour
             new Problem
             (
                 new[] {new Molecule("As"), new Molecule("Na", "O", "H")},
-                new[] {new Molecule("Na 3", "As", "O 3"), new Molecule("H 2", "O")}
+                new[] {new Molecule("Na 3", "As", "O 3"), new Molecule("H 2")}
             ),
             new Problem
             (
@@ -215,7 +215,7 @@ public class EquationManager : MonoBehaviour
             new Problem
             (
                 new[] {new Molecule("V 2", "O 5"), new Molecule("H", "Cl")},
-                new[] {new Molecule("V", "O", "Cl3"), new Molecule("H 2", "O")}
+                new[] {new Molecule("V", "O", "Cl 3"), new Molecule("H 2", "O")}
             ),
             new Problem
             (
@@ -266,8 +266,6 @@ public class EquationManager : MonoBehaviour
                 new[] {new Molecule("Ag 3", "P", "O 4"), new Molecule("K", "N", "O 3")}
             ),
         };
-        #endregion
-
 
         // fill ProblemDatabase
         ProblemDatabase.Add(problemsEasy);
@@ -278,19 +276,16 @@ public class EquationManager : MonoBehaviour
         ProblemSets.Add(easyProblemSet);
         ProblemSets.Add(medProblemSet);
         ProblemSets.Add(hardProblemSet);
-/*
-        for (int i = 0; i < problemSetAmounts[0]; i++)
-        {
-            int randEasy = Random.Range(0,problemsEasy.Count-1);
-            easyProblemSet.Add(problemsEasy[randEasy]);
-        }
-*/
+        #endregion
+
+
         for (int i = 0; i < ProblemSets.Count; i++)
         {
             for (int j = 0; j < problemSetAmounts[i]; j++)
             {
                 int rand = Random.Range(0, ProblemDatabase[i].Count-1);
                 ProblemSets[i].Add(ProblemDatabase[i][rand]);
+                ProblemDatabase[i].RemoveAt(rand);
             }
         }
 
@@ -307,6 +302,7 @@ public class EquationManager : MonoBehaviour
         }
         currentSelection = EventSystem.current.currentSelectedGameObject;
 
+
         if (InputManager.instance.MoleculeIncrementInput)
         {
             EventSystem.current.currentSelectedGameObject.GetComponent<MolButtonController>().IncrementMolecule();
@@ -322,36 +318,36 @@ public class EquationManager : MonoBehaviour
             {
                 WinScreen.GetComponent<WinScreenController>().PlayLevelSwitchAnimation();
 
-                foreach (GameObject item in buttonsLeft)
-                {
-                    Destroy(item);
-                }
-                foreach (GameObject item in buttonsRight)
-                {
-                    Destroy(item);
-                }
-                buttonsLeft.Clear();
-                buttonsRight.Clear();
-                if(currentProblemNumber < (problemSetAmounts[currentProblemSet]-1))
-                {
-                    runProblem(ProblemSets[currentProblemSet][++currentProblemNumber]);
-                }
-                else
-                {
-                    currentProblemNumber = 0;
-                    currentProblemSet ++;
-                    runProblem(ProblemSets[currentProblemSet][currentProblemNumber]);
-                }
-                
-
-
-                
             }
         }
     }
 
 
 
+    public void RunNextProblem()
+    {
+        foreach (GameObject item in buttonsLeft)
+        {
+            Destroy(item);
+        }
+        foreach (GameObject item in buttonsRight)
+        {
+            Destroy(item);
+        }
+        buttonsLeft.Clear();
+        buttonsRight.Clear();
+
+        if(currentProblemNumber < (problemSetAmounts[currentProblemSet]-1))
+        {
+            runProblem(ProblemSets[currentProblemSet][++currentProblemNumber]);
+        }
+        else
+        {
+            currentProblemNumber = 0;
+            currentProblemSet ++;
+            runProblem(ProblemSets[currentProblemSet][currentProblemNumber]);
+        }
+    }
     private void runProblem(Problem prob)
     {
         currentProblem = prob;
