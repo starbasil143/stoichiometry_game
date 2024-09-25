@@ -11,8 +11,10 @@ public class EquationManager : MonoBehaviour
     [SerializeField] private GameObject MolButton;
     [SerializeField] private GameObject equationCanvas;
     [SerializeField] private GameObject WinScreen;
+    [SerializeField] private GameObject ErrorFlash;
 
     private int[] problemSetAmounts = {4,4,4};
+    private int remainingLives = 3;
 
 
     private GameObject currentSelection;
@@ -317,7 +319,12 @@ public class EquationManager : MonoBehaviour
             if(currentProblem.isBalanced())
             {
                 WinScreen.GetComponent<WinScreenController>().PlayLevelSwitchAnimation();
-
+            }
+            else
+            {
+                remainingLives--;
+                ErrorFlash.SetActive(false);
+                ErrorFlash.SetActive(true);
             }
         }
     }
@@ -348,6 +355,7 @@ public class EquationManager : MonoBehaviour
             runProblem(ProblemSets[currentProblemSet][currentProblemNumber]);
         }
     }
+
     private void runProblem(Problem prob)
     {
         currentProblem = prob;

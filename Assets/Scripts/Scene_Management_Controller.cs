@@ -12,14 +12,15 @@ using UnityEditor.ProjectWindowCallback;
 public class Scene_Management_Controller : MonoBehaviour
 {
 
-    void Start()
+    public void StartGame()
     {
-        
+        SceneManager.LoadScene("stoich_game");
     }
 
-    void Update()
+    public void ExitGame()
     {
-        
+        Application.Quit();
+        Debug.Log("Application quit");
     }
 
 }
