@@ -7,6 +7,7 @@ public class Molecule
 {
     public List<(String eName, int eAmount)> elements = new List<(String eName, int eAmount)>();
     public int amount = 1;
+    public string stringOverride = "";
     public Molecule(params string[] newElements) // Molecule("H 2", "0 1")
     {
         foreach (string elem in newElements)
@@ -20,6 +21,27 @@ public class Molecule
             {
                 elements.Add((elemSplit[0],Convert.ToInt32(elemSplit[1])));
             }
+        }
+    }
+
+    public Molecule(int flag, string overrideString, params string[] newElements)
+    {
+        foreach (string elem in newElements)
+        {
+            string[] elemSplit = elem.Split(' ');
+            if (elemSplit.Length == 1)
+            {
+                elements.Add((elemSplit[0], 1));
+            }
+            else
+            {
+                elements.Add((elemSplit[0],Convert.ToInt32(elemSplit[1])));
+            }
+        }
+
+        if(flag > 0)
+        {
+            stringOverride = overrideString;
         }
     }
 
@@ -50,12 +72,19 @@ public class Molecule
 
     public override string ToString()
     {
-        string output = (amount>1 ? "("+amount+")" : "");
-        foreach((String eName, int eAmount) element in elements)
+        if (stringOverride != "")
         {
-            output += element.eName + ((element.eAmount>1) ? "<sub>"+element.eAmount+"</sub>" : "");
+            return stringOverride;
         }
-        return output;
+        else
+        {
+            string output = (amount>1 ? "("+amount+")" : "");
+            foreach((String eName, int eAmount) element in elements)
+            {
+                output += element.eName + ((element.eAmount>1) ? "<sub>"+element.eAmount+"</sub>" : "");
+            }
+            return output;
+        }
     }
 }
 

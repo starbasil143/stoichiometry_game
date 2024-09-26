@@ -12,6 +12,12 @@ EditorBuildSettings:
     path: Assets/Scenes/TitleScreen.unity
     guid: 2507ec2ca82c49241a485d132e061e80
   - enabled: 1
-    path: Assets/Scenes/stoich_game.unity
+    path: Assets/Scenes/Game_Easy.unity
     guid: 87f5c6a132d1fb348a8655aabeac5181
+  - enabled: 1
+    path: Assets/Scenes/Game_Medium.unity
+    guid: c15670d2a18592e4a8a64f809d1b9f72
+  - enabled: 1
+    path: Assets/Scenes/Game_Hard.unity
+    guid: 34e4c54e23efbf042b59900a294954f2
   m_configObjects: {}

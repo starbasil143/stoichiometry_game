@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -12,9 +13,15 @@ public class EquationManager : MonoBehaviour
     [SerializeField] private GameObject equationCanvas;
     [SerializeField] private GameObject WinScreen;
     [SerializeField] private GameObject ErrorFlash;
+    [SerializeField] private GameObject ResultsScreen;
+    [SerializeField] private GameObject SceneManagementController;
 
-    private int[] problemSetAmounts = {4,4,4};
-    private int remainingLives = 3;
+    private int[] problemSetAmounts = {2,2,2};
+    public int maxScore;
+
+    public int remainingLives = 3;
+    public int score = 0;
+    public int fails = 0;
 
 
     private GameObject currentSelection;
@@ -36,11 +43,17 @@ public class EquationManager : MonoBehaviour
 
     private int currentProblemSet = 0;
     private int currentProblemNumber = 0;
+    private bool buttonsEnabled;
+    private int currentLevel;
     
 
     private void Start()
     {
 
+        maxScore = problemSetAmounts[currentProblemSet] * 100;
+        SceneManagementController = GameObject.FindWithTag("SceneManagementController");
+        currentLevel = SceneManagementController.GetComponent<Scene_Management_Controller>().GetLevel();
+        currentProblemSet = currentLevel;
         #region Create Problem Lists
         //fill database of problems
 
@@ -226,11 +239,6 @@ public class EquationManager : MonoBehaviour
             ),
             new Problem
             (
-                new[] {new Molecule("H", "Cl", "O 4"), new Molecule("P 4", "O 10")},
-                new[] {new Molecule("H 3", "P", "O 4"), new Molecule("Cl 2", "O 7")}
-            ),
-            new Problem
-            (
                 new[] {new Molecule("Na 3", "P", "O 4"), new Molecule("H", "Cl")},
                 new[] {new Molecule("Na", "Cl"), new Molecule("H 3", "P", "O 4")}
             ),
@@ -238,11 +246,6 @@ public class EquationManager : MonoBehaviour
             (
                 new[] {new Molecule("Ti", "Cl 4"), new Molecule("H 2", "O")},
                 new[] {new Molecule("Ti", "O 2"), new Molecule("H", "Cl")}
-            ),
-            new Problem
-            (
-                new[] {new Molecule("Ag", "N", "O 3"), new Molecule("K 3", "P", "O 4")},
-                new[] {new Molecule("Ag 3", "P", "O 4"), new Molecule("K", "N", "O 3")}
             ),
         };
         List<Problem> problemsHard = new List<Problem>
@@ -254,18 +257,58 @@ public class EquationManager : MonoBehaviour
             ),
             new Problem
             (
-                new[] {new Molecule("Ag", "N", "O 3"), new Molecule("K 3", "P", "O 4")},
-                new[] {new Molecule("Ag 3", "P", "O 4"), new Molecule("K", "N", "O 3")}
+                new[] {new Molecule("H 3", "P", "O 4"), new Molecule(1, "Mg(OH)<sub>2</sub>", "Mg", "O 2", "H 2")},
+                new[] {new Molecule(1, "Mg<sub>3</sub>(PO<sub>4</sub>)<sub>2</sub>", "Mg 3", "P 2", "O 8"), new Molecule("H 2", "O")}
             ),
             new Problem
             (
-                new[] {new Molecule("Ag", "N", "O 3"), new Molecule("K 3", "P", "O 4")},
-                new[] {new Molecule("Ag 3", "P", "O 4"), new Molecule("K", "N", "O 3")}
+                new[] {new Molecule(1, "Al(OH)<sub>3</sub>", "Al", "O 3", "H 3"), new Molecule("H 2", "C", "O 3")},
+                new[] {new Molecule(1, "Al<sub>2</sub>(CO<sub>3</sub>)<sub>3</sub>", "Al 2", "C 3", "O 9"), new Molecule("H 2", "O")}
             ),
             new Problem
             (
-                new[] {new Molecule("Ag", "N", "O 3"), new Molecule("K 3", "P", "O 4")},
-                new[] {new Molecule("Ag 3", "P", "O 4"), new Molecule("K", "N", "O 3")}
+                new[] {new Molecule(1, "Ca<sub>3</sub>(PO<sub>4</sub>)<sub>2</sub>", "Ca 3", "P 2", "O 8"), new Molecule("Si", "O 2"), new Molecule("C")},
+                new[] {new Molecule("Ca", "Si", "O 3"), new Molecule("C", "O"), new Molecule("P 4")}
+            ),
+            new Problem
+            (
+                new[] {new Molecule("H 3", "P", "O 4"), new Molecule(1, "Ca(OH)<sub>2</sub>", "Ca", "O 2", "H 2")},
+                new[] {new Molecule(1, "Ca<sub>3</sub>(PO<sub>4</sub>)<sub>2</sub>", "Ca 3", "P 2", "O 8"), new Molecule("H 2", "O")}
+            ),
+            new Problem
+            (
+                new[] {new Molecule(1, "Al(OH)<sub>3</sub>", "Al", "O 3", "H 3"), new Molecule("H", "Br")},
+                new[] {new Molecule("Al", "Br 3"), new Molecule("H 2", "O")}
+            ),
+            new Problem
+            (
+                new[] {new Molecule("Fe", "Cl 3"), new Molecule("Na", "O", "H")},
+                new[] {new Molecule(1, "Fe(OH)<sub>3</sub>", "Fe", "O 3", "H 3"), new Molecule("Na", "Cl")}
+            ),
+            new Problem
+            (
+                new[] {new Molecule(1, "Pb(OH)<sub>2</sub>", "Pb", "O 2", "H 2"), new Molecule("H", "Cl")},
+                new[] {new Molecule(1, "H 2", "O"), new Molecule("Pb", "Cl 2")}
+            ),
+            new Problem
+            (
+                new[] {new Molecule("Al", "Br 3"), new Molecule("K 2", "S", "O 4")},
+                new[] {new Molecule("K", "Br"), new Molecule(1, "Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>", "Al 2", "S 3", "O 12")}
+            ),
+            new Problem
+            (
+                new[] {new Molecule(1, "Cu(NO<sub>3</sub>)<sub>2</sub>", "Cu", "N 2", "O 6"), new Molecule("K", "O", "H")},
+                new[] {new Molecule(1, "Cu(OH)<sub>2</sub>", "Cu", "O 2", "H 2"), new Molecule("K", "N", "O 3")}
+            ),
+            new Problem
+            (
+                new[] {new Molecule(1, "Mn(NO<sub>2</sub>)<sub>2</sub>", "Mn", "N 2", "O 4"), new Molecule("Be", "Cl 2")},
+                new[] {new Molecule(1, "Be(NO<sub>2</sub>)<sub>2</sub>", "Be", "N 2", "O 4"), new Molecule("Mn", "Cl 2")}
+            ),
+            new Problem
+            (
+                new[] {new Molecule("H", "Cl", "O 4"), new Molecule("P 4", "O 10")},
+                new[] {new Molecule("H 3", "P", "O 4"), new Molecule("Cl 2", "O 7")}
             ),
         };
 
@@ -280,7 +323,7 @@ public class EquationManager : MonoBehaviour
         ProblemSets.Add(hardProblemSet);
         #endregion
 
-
+        buttonsEnabled = true;
         for (int i = 0; i < ProblemSets.Count; i++)
         {
             for (int j = 0; j < problemSetAmounts[i]; j++)
@@ -293,38 +336,53 @@ public class EquationManager : MonoBehaviour
 
 
 
-        runProblem(ProblemSets[0][currentProblemNumber]);
+        runProblem(ProblemSets[currentLevel][currentProblemNumber]);
+
     }
 
     private void Update()
     {
-        if (EventSystem.current.currentSelectedGameObject == null)
+        if(buttonsEnabled)
         {
-            EventSystem.current.SetSelectedGameObject(currentSelection);
-        }
-        currentSelection = EventSystem.current.currentSelectedGameObject;
-
-
-        if (InputManager.instance.MoleculeIncrementInput)
-        {
-            EventSystem.current.currentSelectedGameObject.GetComponent<MolButtonController>().IncrementMolecule();
-        }
-        if (InputManager.instance.MoleculeDecrementInput)
-        {
-            EventSystem.current.currentSelectedGameObject.GetComponent<MolButtonController>().DecrementMolecule();
-        }
-        if (InputManager.instance.CheckAnswerInput)
-        {
-            Debug.Log(currentProblem.isBalanced());
-            if(currentProblem.isBalanced())
+            if (EventSystem.current.currentSelectedGameObject == null)
             {
-                WinScreen.GetComponent<WinScreenController>().PlayLevelSwitchAnimation();
+                EventSystem.current.SetSelectedGameObject(currentSelection);
             }
-            else
+            currentSelection = EventSystem.current.currentSelectedGameObject;
+
+
+            if (InputManager.instance.MoleculeIncrementInput)
             {
-                remainingLives--;
-                ErrorFlash.SetActive(false);
-                ErrorFlash.SetActive(true);
+                EventSystem.current.currentSelectedGameObject.GetComponent<MolButtonController>().IncrementMolecule();
+            }
+            if (InputManager.instance.MoleculeDecrementInput)
+            {
+                EventSystem.current.currentSelectedGameObject.GetComponent<MolButtonController>().DecrementMolecule();
+            }
+            if (InputManager.instance.CheckAnswerInput)
+            {
+                Debug.Log(currentProblem.isBalanced());
+                if(currentProblem.isBalanced())
+                {
+                    if(currentProblemNumber < (problemSetAmounts[currentProblemSet]-1))
+                    {
+                        WinScreen.GetComponent<WinScreenController>().PlayLevelSwitchAnimation();
+                        score+=100;
+                    }
+                    else
+                    {
+                        score+=100;
+                        ResultsScreen.SetActive(true);
+                    }
+                }
+                else
+                {
+                    remainingLives--;
+                    fails++;
+                    score-=30;
+                    ErrorFlash.SetActive(false);
+                    ErrorFlash.SetActive(true);
+                }
             }
         }
     }
@@ -332,6 +390,16 @@ public class EquationManager : MonoBehaviour
 
 
     public void RunNextProblem()
+    {
+        DestroyButtons();
+
+        if(currentProblemNumber < (problemSetAmounts[currentProblemSet]-1))
+        {
+            runProblem(ProblemSets[currentProblemSet][++currentProblemNumber]);
+        }
+    }
+
+    public void DestroyButtons()
     {
         foreach (GameObject item in buttonsLeft)
         {
@@ -343,17 +411,13 @@ public class EquationManager : MonoBehaviour
         }
         buttonsLeft.Clear();
         buttonsRight.Clear();
+    }
 
-        if(currentProblemNumber < (problemSetAmounts[currentProblemSet]-1))
-        {
-            runProblem(ProblemSets[currentProblemSet][++currentProblemNumber]);
-        }
-        else
-        {
-            currentProblemNumber = 0;
-            currentProblemSet ++;
-            runProblem(ProblemSets[currentProblemSet][currentProblemNumber]);
-        }
+    public void DisableButtons()
+    {
+        
+        DestroyButtons();
+        buttonsEnabled = false;
     }
 
     private void runProblem(Problem prob)
