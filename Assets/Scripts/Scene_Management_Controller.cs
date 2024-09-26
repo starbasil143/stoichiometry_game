@@ -40,6 +40,10 @@ public class Scene_Management_Controller : MonoBehaviour
         {
             WinGame();
         }
+        else if(SceneManager.GetActiveScene().name == "Tutorial_scene")
+        {
+            GoToMenu();
+        }
         else
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
@@ -53,6 +57,10 @@ public class Scene_Management_Controller : MonoBehaviour
     {
         SceneManager.LoadScene(1);
     }
+    public void StartTutorial()
+    {
+        SceneManager.LoadScene("Tutorial_Scene");
+    }
     public void PlaySoundtrack()
     {
         gameObject.GetComponent<AudioSource>().Play();
@@ -60,6 +68,10 @@ public class Scene_Management_Controller : MonoBehaviour
     public int GetLevel()
     {
         return SceneManager.GetActiveScene().buildIndex - 1; //easy is 0, med is 1, hard is 2
+    }
+    public bool InTutorial()
+    {
+        return SceneManager.GetActiveScene().ToString() == "Tutorial_Scene";
     }
     public void StopSoundtrack()
     {

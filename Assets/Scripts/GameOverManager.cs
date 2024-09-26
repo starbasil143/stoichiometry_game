@@ -39,14 +39,18 @@ public class GameOverManager : MonoBehaviour
 
         if(timer2 <= 1.5f && !EventSystemObject.activeSelf)
         {
-            EventSystemObject.SetActive(true);
+            if(!EventSystemObject.activeSelf)
+            {
+                EventSystemObject.SetActive(true);   
+            }
+            if (EventSystem.current.currentSelectedGameObject == null)
+            {
+                EventSystem.current.SetSelectedGameObject(currentSelection);
+            }
+            currentSelection = EventSystem.current.currentSelectedGameObject;
         }
 
 
-        if (EventSystem.current.currentSelectedGameObject == null)
-        {
-            EventSystem.current.SetSelectedGameObject(currentSelection);
-        }
-        currentSelection = EventSystem.current.currentSelectedGameObject;
+
     }
 }

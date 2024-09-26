@@ -73,8 +73,8 @@ public class EquationManager : MonoBehaviour
             ),
             new Problem
             (
-                new[] {new Molecule("Al 2", "O 3")},
-                new[] {new Molecule("Al"), new Molecule("O 2"),}
+                new[] {new Molecule("Na"), new Molecule("Cl 2")},
+                new[] {new Molecule("Na", "Cl")}
             ),
         };
 
@@ -94,11 +94,6 @@ public class EquationManager : MonoBehaviour
             (
                 new[] {new Molecule("Fe"), new Molecule("O 2")},
                 new[] {new Molecule("Fe 2", "O 3")}
-            ),
-            new Problem
-            (
-                new[] {new Molecule("Na"), new Molecule("Cl 2")},
-                new[] {new Molecule("Na", "Cl")}
             ),
             new Problem
             (
@@ -314,6 +309,8 @@ public class EquationManager : MonoBehaviour
             ),
         };
 
+        
+
         // fill ProblemDatabase
         ProblemDatabase.Add(problemsEasy);
         ProblemDatabase.Add(problemsMedium);
@@ -386,7 +383,7 @@ public class EquationManager : MonoBehaviour
                         TrueDeath.SetActive(false);
                         TrueDeath.SetActive(true);
                     }
-                    else
+                    else if (remainingLives > 0)
                     {
                         ErrorFlash.SetActive(false);
                         ErrorFlash.SetActive(true);

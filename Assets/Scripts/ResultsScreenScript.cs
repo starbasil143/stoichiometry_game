@@ -24,11 +24,20 @@ public class ResultsScreenScript : MonoBehaviour
 
     private void OnEnable()
     {
+
         resultsAnimator = GetComponent<Animator>();
         EquationManager = GameObject.FindWithTag("EquationManager");
         SceneManagerObject = GameObject.FindWithTag("SceneManagementController");
-        transform.Find("ResultsPanel").Find("ScoreText").GetComponent<TMP_Text>().text = "Score: " + EquationManager.GetComponent<EquationManager>().score.ToString() + "/" + EquationManager.GetComponent<EquationManager>().maxScore.ToString();
-        transform.Find("ResultsPanel").Find("FailsafesText").GetComponent<TMP_Text>().text = "Failsafes: " + EquationManager.GetComponent<EquationManager>().fails.ToString();
+        if(EquationManager.GetComponent<EquationManagerTutorial>() != null)
+        {
+            transform.Find("ResultsPanel").Find("ScoreText").GetComponent<TMP_Text>().text = "Score: " + EquationManager.GetComponent<EquationManagerTutorial>().score.ToString() + "/" + EquationManager.GetComponent<EquationManagerTutorial>().maxScore.ToString();
+            transform.Find("ResultsPanel").Find("FailsafesText").GetComponent<TMP_Text>().text = "Failsafes remaining: " + (EquationManager.GetComponent<EquationManagerTutorial>().remainingLives-1).ToString();
+        }
+        else
+        {
+            transform.Find("ResultsPanel").Find("ScoreText").GetComponent<TMP_Text>().text = "Score: " + EquationManager.GetComponent<EquationManager>().score.ToString() + "/" + EquationManager.GetComponent<EquationManager>().maxScore.ToString();
+            transform.Find("ResultsPanel").Find("FailsafesText").GetComponent<TMP_Text>().text = "Failsafes remaining: " + (EquationManager.GetComponent<EquationManager>().remainingLives-1).ToString();
+        }
         transform.Find("ResultsPanel").Find("TimeText").GetComponent<TMP_Text>().text = "Time: " + SceneManagerObject.GetComponent<Scene_Management_Controller>().GetTime();
 
     
@@ -68,7 +77,14 @@ public class ResultsScreenScript : MonoBehaviour
 
     public void SwitchToResultsControls()
     {
-        EquationManager.GetComponent<EquationManager>().DisableButtons();
+        if(EquationManager.GetComponent<EquationManagerTutorial>() != null)
+        {
+            EquationManager.GetComponent<EquationManagerTutorial>().DisableButtons();
+        }
+        else
+        {
+            EquationManager.GetComponent<EquationManager>().DisableButtons();
+        }
         EventSystem.current.SetSelectedGameObject(transform.Find("ResultsPanel").transform.Find("NextButton").gameObject);
         currentSelection = EventSystem.current.currentSelectedGameObject;
         resultsControlsActive = true;

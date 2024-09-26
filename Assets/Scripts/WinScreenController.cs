@@ -33,8 +33,16 @@ public class WinScreenController : MonoBehaviour
 
     public void GoToNextProblem()
     {
-        EquationManager.GetComponent<EquationManager>().RunNextProblem();
+        if(EquationManager.GetComponent<EquationManager>() != null)
+        {
+            EquationManager.GetComponent<EquationManager>().RunNextProblem();
+        }
+        else
+        {
+            EquationManager.GetComponent<EquationManagerTutorial>().RunNextProblem();
+        }
     }
+   
 
     public void PlayAudioSlam()
     {
