@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -18,7 +17,7 @@ public class EquationManager : MonoBehaviour
     [SerializeField] private GameObject Failsafe;
     [SerializeField] private GameObject TrueDeath;
 
-    private int[] problemSetAmounts = {3,3,3};
+    private int[] problemSetAmounts = {4,4,4};
     public int maxScore;
 
     public int remainingLives;
