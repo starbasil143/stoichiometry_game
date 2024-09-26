@@ -8,6 +8,7 @@ public class Molecule
     public List<(String eName, int eAmount)> elements = new List<(String eName, int eAmount)>();
     public int amount = 1;
     public string stringOverride = "";
+    public bool big = false;
     public Molecule(params string[] newElements) // Molecule("H 2", "0 1")
     {
         foreach (string elem in newElements)
@@ -42,6 +43,7 @@ public class Molecule
         if(flag > 0)
         {
             stringOverride = overrideString;
+            big = true;
         }
     }
 

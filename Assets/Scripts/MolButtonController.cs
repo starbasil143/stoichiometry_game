@@ -15,6 +15,10 @@ public class MolButtonController : MonoBehaviour
     {
         gameObject.transform.SetSiblingIndex(gameObject.transform.GetSiblingIndex()-3);
         transform.Find("MoleculeText").GetComponent<TMP_Text>().text = molecule.ToString();
+        if(molecule.big)
+        {
+            gameObject.transform.Find("MoleculeText").GetComponent<TMP_Text>().fontSize = 45f;
+        }
         transform.Find("AmountText").GetComponent<TMP_Text>().text = "";
         buttonAnimator = GetComponent<Animator>();
     }
