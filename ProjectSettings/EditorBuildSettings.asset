@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Game_Hard.unity
     guid: 34e4c54e23efbf042b59900a294954f2
+  - enabled: 1
+    path: Assets/Scenes/GameOver_Scene.unity
+    guid: e9ed8c13576850e49b85df63ae3d5206
   m_configObjects: {}

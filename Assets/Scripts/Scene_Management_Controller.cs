@@ -8,6 +8,7 @@ using Unity.VisualScripting;
 using System;
 using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEditor.ProjectWindowCallback;
+using UnityEditor;
 
 public class Scene_Management_Controller : MonoBehaviour
 {
@@ -35,7 +36,14 @@ public class Scene_Management_Controller : MonoBehaviour
     }
     public void GoToNextLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        if(SceneManager.GetActiveScene().buildIndex == 3)
+        {
+            WinGame();
+        }
+        else
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
     }
     public void GoToMenu()
     {
@@ -52,6 +60,18 @@ public class Scene_Management_Controller : MonoBehaviour
     public int GetLevel()
     {
         return SceneManager.GetActiveScene().buildIndex - 1; //easy is 0, med is 1, hard is 2
+    }
+    public void StopSoundtrack()
+    {
+        gameObject.GetComponent<AudioSource>().Stop();
+    }
+    public void DestroyUniverse()
+    {
+        SceneManager.LoadScene("GameOver_Scene");
+    }
+    public void WinGame()
+    {
+        GoToMenu(); //for now
     }
 
     public void ExitGame()

@@ -15,11 +15,13 @@ public class EquationManager : MonoBehaviour
     [SerializeField] private GameObject ErrorFlash;
     [SerializeField] private GameObject ResultsScreen;
     [SerializeField] private GameObject SceneManagementController;
+    [SerializeField] private GameObject Failsafe;
+    [SerializeField] private GameObject TrueDeath;
 
-    private int[] problemSetAmounts = {2,2,2};
+    private int[] problemSetAmounts = {3,3,3};
     public int maxScore;
 
-    public int remainingLives = 3;
+    public int remainingLives;
     public int score = 0;
     public int fails = 0;
 
@@ -288,7 +290,7 @@ public class EquationManager : MonoBehaviour
             new Problem
             (
                 new[] {new Molecule(1, "Pb(OH)<sub>2</sub>", "Pb", "O 2", "H 2"), new Molecule("H", "Cl")},
-                new[] {new Molecule(1, "H 2", "O"), new Molecule("Pb", "Cl 2")}
+                new[] {new Molecule("H 2", "O"), new Molecule("Pb", "Cl 2")}
             ),
             new Problem
             (
@@ -379,9 +381,18 @@ public class EquationManager : MonoBehaviour
                 {
                     remainingLives--;
                     fails++;
+                    if(remainingLives == 0)
+                    {
+                        TrueDeath.SetActive(false);
+                        TrueDeath.SetActive(true);
+                    }
+                    else
+                    {
+                        ErrorFlash.SetActive(false);
+                        ErrorFlash.SetActive(true);
+                    }
                     score-=30;
-                    ErrorFlash.SetActive(false);
-                    ErrorFlash.SetActive(true);
+                    Failsafe.GetComponent<Failsafe_Container_Manager>().SpendFailsafe();
                 }
             }
         }
@@ -428,14 +439,14 @@ public class EquationManager : MonoBehaviour
         {
             buttonsLeft.Add(Instantiate(MolButton, equationCanvas.transform));
             buttonsLeft[i].GetComponent<MolButtonController>().molecule = prob.leftSide[i];
-            buttonsLeft[i].transform.localPosition = new Vector2((prob.leftSide.Count - i)*(-960f)/(prob.leftSide.Count+1), 0f);
+            buttonsLeft[i].transform.localPosition = new Vector2((prob.leftSide.Count - i)*(-960f)/(prob.leftSide.Count+1), -100f);
         }
 
         for (int i = 0; i < prob.rightSide.Count; i++)
         {
             buttonsRight.Add(Instantiate(MolButton, equationCanvas.transform));
             buttonsRight[i].GetComponent<MolButtonController>().molecule = prob.rightSide[i];
-            buttonsRight[i].transform.localPosition = new Vector2((i+1)*(960f)/(prob.rightSide.Count+1), 0f);
+            buttonsRight[i].transform.localPosition = new Vector2((i+1)*(960f)/(prob.rightSide.Count+1), -100f);
         }
 
         for (int i = 0; i < buttonsLeft.Count; i++)
