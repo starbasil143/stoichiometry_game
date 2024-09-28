@@ -17,7 +17,7 @@ public class EquationManager : MonoBehaviour
     [SerializeField] private GameObject Failsafe;
     [SerializeField] private GameObject TrueDeath;
 
-    private int[] problemSetAmounts = {4,4,4};
+    private int[] problemSetAmounts = {5,5,5};
     public int maxScore;
 
     public int remainingLives;
@@ -359,36 +359,40 @@ public class EquationManager : MonoBehaviour
             }
             if (InputManager.instance.CheckAnswerInput)
             {
-                Debug.Log(currentProblem.isBalanced());
-                if(currentProblem.isBalanced())
+                    Debug.Log(currentProblem.isBalanced());
+                if(WinScreen.GetComponent<Animator>().GetCurrentAnimatorClipInfo(0)[0].clip.name != "levelswitch" && WinScreen.GetComponent<Animator>().GetCurrentAnimatorClipInfo(0)[0].clip.name != "levelstart" && !ResultsScreen.activeSelf)
                 {
-                    if(currentProblemNumber < (problemSetAmounts[currentProblemSet]-1))
+                    if(currentProblem.isBalanced())
                     {
-                        WinScreen.GetComponent<WinScreenController>().PlayLevelSwitchAnimation();
-                        score+=100;
+                        if(currentProblemNumber < (problemSetAmounts[currentProblemSet]-1))
+                        {
+                            
+                            score+=100;
+                            WinScreen.GetComponent<WinScreenController>().PlayLevelSwitchAnimation();
+                        }
+                        else
+                        {
+                            score+=100;
+                            ResultsScreen.SetActive(true);
+                        }
                     }
                     else
                     {
-                        score+=100;
-                        ResultsScreen.SetActive(true);
+                        remainingLives--;
+                        fails++;
+                        if(remainingLives == 0)
+                        {
+                            TrueDeath.SetActive(false);
+                            TrueDeath.SetActive(true);
+                        }
+                        else if (remainingLives > 0)
+                        {
+                            ErrorFlash.SetActive(false);
+                            ErrorFlash.SetActive(true);
+                        }
+                        score-=30;
+                        Failsafe.GetComponent<Failsafe_Container_Manager>().SpendFailsafe();
                     }
-                }
-                else
-                {
-                    remainingLives--;
-                    fails++;
-                    if(remainingLives == 0)
-                    {
-                        TrueDeath.SetActive(false);
-                        TrueDeath.SetActive(true);
-                    }
-                    else if (remainingLives > 0)
-                    {
-                        ErrorFlash.SetActive(false);
-                        ErrorFlash.SetActive(true);
-                    }
-                    score-=30;
-                    Failsafe.GetComponent<Failsafe_Container_Manager>().SpendFailsafe();
                 }
             }
         }

@@ -12,6 +12,7 @@ public class Scene_Management_Controller : MonoBehaviour
     private float currentTime;
     public void Start()
     {
+        Cursor.visible = false;
         timerActive = true;
         currentTime = 0;
     }
@@ -32,7 +33,7 @@ public class Scene_Management_Controller : MonoBehaviour
     }
     public void GoToNextLevel()
     {
-        if(SceneManager.GetActiveScene().buildIndex == 3)
+        if(SceneManager.GetActiveScene().buildIndex == 4)
         {
             WinGame();
         }
@@ -51,7 +52,7 @@ public class Scene_Management_Controller : MonoBehaviour
     }
     public void StartGame()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(2);
     }
     public void StartTutorial()
     {
@@ -63,7 +64,7 @@ public class Scene_Management_Controller : MonoBehaviour
     }
     public int GetLevel()
     {
-        return SceneManager.GetActiveScene().buildIndex - 1; //easy is 0, med is 1, hard is 2
+        return SceneManager.GetActiveScene().buildIndex - 2; //easy is 0, med is 1, hard is 2
     }
     public bool InTutorial()
     {
@@ -79,7 +80,7 @@ public class Scene_Management_Controller : MonoBehaviour
     }
     public void WinGame()
     {
-        GoToMenu(); //for now
+        SceneManager.LoadScene("Win_Scene");
     }
 
     public void ExitGame()
